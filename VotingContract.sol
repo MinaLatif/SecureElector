@@ -13,7 +13,7 @@ contract SafeVote {
     token public tokenReward;
     mapping(address => uint256) public balanceOf;
     bool fundingGoalReached = false;
-    bool crowdsaleClosed = false;
+    bool votingSessionClosed = false;
 
     // This is a type for a single proposal.
     struct Candidate {
@@ -57,7 +57,7 @@ contract SafeVote {
      * The function without name is the default function that is called whenever anyone sends funds to a contract
      */
     function () payable {
-        require(!crowdsaleClosed);
+        require(!votingSessionClosed);
         uint amount = msg.value;
         balanceOf[msg.sender] += amount;
         amountRaised += amount;
@@ -77,37 +77,6 @@ contract SafeVote {
             fundingGoalReached = true;
             GoalReached(votingCommission, amountRaised);
         }
-        crowdsaleClosed = true;
-    }
-
-
-    /**
-     * Withdraw the funds
-     *
-     * Checks to see if goal or time limit has been reached, and if so, and the funding goal was reached,
-     * sends the entire amount to the votingCommission. If goal was not reached, each contributor can withdraw
-     * the amount they contributed.
-     */
-    function safeWithdrawal() afterDeadline {
-        if (!fundingGoalReached) {
-            uint amount = balanceOf[msg.sender];
-            balanceOf[msg.sender] = 0;
-            if (amount > 0) {
-                if (msg.sender.send(amount)) {
-                    FundTransfer(msg.sender, amount, false);
-                } else {
-                    balanceOf[msg.sender] = amount;
-                }
-            }
-        }
-
-        if (fundingGoalReached && votingCommission == msg.sender) {
-            if (votingCommission.send(amountRaised)) {
-                FundTransfer(votingCommission, amountRaised, false);
-            } else {
-                //If we fail to send the funds to votingCommission, unlock funders balance
-                fundingGoalReached = false;
-            }
-        }
+        votingSessionClosed = true;
     }
 }
