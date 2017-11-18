@@ -1,59 +1,40 @@
-const path = require('path')
-//const express = require('express')
-var fs = require('fs')
-const Web3 = require('web3')
-
-const web3 = new Web3(new Web3.providers.HttpProvider("http://52.242.26.191:8545"))
+var fs = require('fs');
+var Web3 = require('web3');
+var web3 = new Web3.providers.HttpProvider("http://52.235.42.157:8545");
+var code = fs.readFileSync('Voting.sol').toString()
 var solc = require('solc')
+var compiledCode = solc.compile(code)
 
-const input = fs.readFileSync("Token.sol");
-console.log('Compiling...')
-const output = solc.compile(input.toString(), 1);
-console.log('Done.')
-const bytecode = output.contracts[':Token'].bytecode;
-const abi = JSON.parse(output.contracts[':Token'].interface);
+abiDefinition = JSON.parse(compiledCode.contracts[':Voting'].interface)
 
+console.log('^^^^', web3);
+VotingContract = web3.eth.contract(abiDefinition)
+byteCode = compiledCode.contracts[':Voting'].bytecode
+deployedContract = VotingContract.new(['Rama','Nick','Jose'],{data: byteCode, from: web3.eth.accounts[0], gas: 4700000})
+deployedContract.address
+contractInstance = VotingContract.at(deployedContract.address)
 
-const contract = web3.eth.contract(abi);
+candidates = {"Rama": "candidate-1", "Nick": "candidate-2", "Jose": "candidate-3"}
 
-const contractInstance = contract.new({
-	data: '0x' + bytecode,
-	from: web3.eth.coinbase,
-	gas: 90000*2
-}, (err, res) => {
-	if(err) {
-		console.log('Err: ' + err);
-		return
-	}
-
-	console.log(web3.eth.coinbase)
-	console.log('Transaction hash: ' + res.transactionHash);
-
-	if(res.address){
-		console.log('Contract address: ' + res.address)
-		testContract(res.address);
-	}
-});
-
-function testContract(address){
-	const destAcct = '0x14A2AC8D15e97C872af8A090CB74Fb4828059869';
-	const token = contract.at(destAcct)
-
-	const balance1 = token.balances.call(address)
-	console.log(address + ": " + balance1.toString())
-
-	token.transfer(destAcct, 100, {from: web3.eth.coinbase}, (err, res) => {
-		console.log('tx: ' + res)
-		const balance2 = token.balances.call(destAcct);
-		console.log(destAcct + ": " + balance2.toString())
-	})
+function voteForCandidate() {
+  candidateName = $("#candidate").val();
+  contractInstance.voteForCandidate(candidateName, {from: web3.eth.accounts[0]}, function() {
+	let div_id = candidates[candidateName];
+	console.log(contractInstance.totalVotesFor.call("candidate-1"));
+    $("#" + div_id).html(contractInstance.totalVotesFor.call(candidateName).toString());
+  });
 }
 
+$('document').ready(function() {
+  candidateNames = Object.keys(candidates);
+  for (var i = 0; i < candidateNames.length; i++) {
+    let name = candidateNames[i];
+	let val = contractInstance.totalVotesFor.call(name).toString();;
+	console.log(val)
+	console.log(contractInstance.totalVotesFor.call("candidate-1"));
+    $("#" + candidates[name]).html(val);
+  }
+});
 
-// const app = express()
 
-// app.get('/', (response, request) => {
 
-// })
-
-//app.listen(3000);
