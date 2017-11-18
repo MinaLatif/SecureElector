@@ -15,6 +15,15 @@ contract SafeVote {
     bool fundingGoalReached = false;
     bool crowdsaleClosed = false;
 
+    // This is a type for a single proposal.
+    struct Candidate {
+        string name;   // short name (up to 32 bytes)
+        uint voteCount; // number of accumulated votes
+    }
+
+    string[] candidateTitles = ["Liberal", "Conservative", "NDP", "Bloc-Quebecois", "Green Party"];
+    Candidate[] public candidates;
+
     event GoalReached(address recipient, uint totalAmountRaised);
     event FundTransfer(address backer, uint amount, bool isContribution);
 
@@ -33,6 +42,13 @@ contract SafeVote {
         fundingGoal = fundingGoalInEthers * 1 ether;
         deadline = now + durationInMinutes * 1 minutes; // timeout if logged on for too long
         tokenReward = token(addressOfTokenUsedAsReward);
+
+        for (uint i = 0; i < candidateTitles.length; i++) {
+            candidates.push(Candidate({
+                name: candidateTitles[i],
+                voteCount: 0
+            }));
+        }
     }
 
     /**
@@ -54,7 +70,7 @@ contract SafeVote {
     /**
      * Check if goal was reached
      *
-     * Checks if the goal or time limit has been reached and ends the campaign
+     * Checks if the goal or time limit has been reached and ends the session
      */
     function checkGoalReached() afterDeadline {
         if (amountRaised >= fundingGoal){
