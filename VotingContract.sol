@@ -5,15 +5,15 @@ interface token {
     function transfer(address receiver, uint amount);
 }
 
-contract VotingSystem {
-    address public votingHead;
+contract SafeVote {
+    address public votingCommission;
     uint public fundingGoal;
     uint public amountRaised;
     uint public deadline;
     token public tokenReward;
     mapping(address => uint256) public balanceOf;
     bool fundingGoalReached = false;
-    bool vottingSessionClosed = false;
+    bool crowdsaleClosed = false;
 
     event GoalReached(address recipient, uint totalAmountRaised);
     event FundTransfer(address backer, uint amount, bool isContribution);
@@ -23,14 +23,15 @@ contract VotingSystem {
      *
      * Setup the owner
      */
-    function VotingSystem(
+    function SafeVote(
+        address ifSuccessfulSendTo,
         uint fundingGoalInEthers,
-        uint etherCostOfEachToken,
+        uint durationInMinutes,
         address addressOfTokenUsedAsReward
     ) {
-        votingHead = 0xc4Ca2A205D6EC66ff58BE2D13D41b923E32Cb354;
+        votingCommission = ifSuccessfulSendTo;
         fundingGoal = fundingGoalInEthers * 1 ether;
-        deadline = now + 2 * 1 minutes; // only 2 minutes allowed
+        deadline = now + durationInMinutes * 1 minutes; // timeout if logged on for too long
         tokenReward = token(addressOfTokenUsedAsReward);
     }
 
@@ -40,7 +41,7 @@ contract VotingSystem {
      * The function without name is the default function that is called whenever anyone sends funds to a contract
      */
     function () payable {
-        require(!vottingSessionClosed);
+        require(!crowdsaleClosed);
         uint amount = msg.value;
         balanceOf[msg.sender] += amount;
         amountRaised += amount;
@@ -58,9 +59,9 @@ contract VotingSystem {
     function checkGoalReached() afterDeadline {
         if (amountRaised >= fundingGoal){
             fundingGoalReached = true;
-            GoalReached(votingHead, amountRaised);
+            GoalReached(votingCommission, amountRaised);
         }
-        vottingSessionClosed = true;
+        crowdsaleClosed = true;
     }
 
 
@@ -68,7 +69,7 @@ contract VotingSystem {
      * Withdraw the funds
      *
      * Checks to see if goal or time limit has been reached, and if so, and the funding goal was reached,
-     * sends the entire amount to the votingHead. If goal was not reached, each contributor can withdraw
+     * sends the entire amount to the votingCommission. If goal was not reached, each contributor can withdraw
      * the amount they contributed.
      */
     function safeWithdrawal() afterDeadline {
@@ -84,11 +85,11 @@ contract VotingSystem {
             }
         }
 
-        if (fundingGoalReached && votingHead == msg.sender) {
-            if (votingHead.send(amountRaised)) {
-                FundTransfer(votingHead, amountRaised, false);
+        if (fundingGoalReached && votingCommission == msg.sender) {
+            if (votingCommission.send(amountRaised)) {
+                FundTransfer(votingCommission, amountRaised, false);
             } else {
-                //If we fail to send the funds to votingHead, unlock funders balance
+                //If we fail to send the funds to votingCommission, unlock funders balance
                 fundingGoalReached = false;
             }
         }
