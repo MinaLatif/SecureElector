@@ -9,12 +9,18 @@
 <body class="container">
   <h1 id="votingPageTitle">Welcome to Canada Election's Online Portal!</h1>
 	<h2>Hello, you.</h2>
+	<div class="parentDisable"></div>
+	<div id="vote-confirm-popup">
+		<h3>You have chosen to vote for <span class="vote-for-candidate">oinds</span>.</h3>
+		<button class="button submit-ballot-confirm">Yes, I confirm my vote.</button>
+		<button class="button submit-ballot-no">No, I want to choose another.</button>
+	</div>
   <div id="candidate-button-collection">
-    <button class="button button1">Green Party</button>
-    <button class="button button2">Conservative</button>
-    <button class="button button3">Liberal</button>
-    <button class="button button4">NDP</button>
-    <button class="button button5">Bloc-Quebecois</button>
+    <button class="button btn-vote-choice button1">Green Party</button>
+    <button class="button btn-vote-choice button2">Conservative</button>
+    <button class="button btn-vote-choice button3">Liberal</button>
+    <button class="button btn-vote-choice button4">NDP</button>
+    <button class="button btn-vote-choice button5">Bloc-Qu&eacute;b&eacute;cois</button>
   </div>
   <div class="table-responsive">
     <table class="table table-bordered">
@@ -42,16 +48,17 @@
           <td id="candidate-3"></td>
         </tr>
         <tr>
-          <td>Bloc-Quebecois</td>
+          <td>Bloc-Qu&eacute;b&eacute;cois</td>
           <td id="candidate-4"></td>
         </tr>
       </tbody>
     </table>
   </div>
-  <input type="text" id="candidate" />
-  <a href="#" onclick="voteForCandidate()" class="btn btn-primary">Vote</a>
+
+	<form class="submission-form" action="/submit" method="POST">
+		<input type="hidden" id="ballot" name="ballot">
+	</form>
 </body>
-<script src="https://cdn.rawgit.com/ethereum/web3.js/develop/dist/web3.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="./public/interface.js"></script>
 </html>

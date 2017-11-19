@@ -16,7 +16,9 @@ const abi = JSON.parse(output.contracts[':Voting'].interface);
 
 const VotingContract = web3.eth.contract(abi)
 const byteCode = output.contracts[':Voting'].bytecode
-const deployedContract = VotingContract.new(['Rama', 'Nick', 'Jose'], { data: '0x' + byteCode, from: web3.eth.accounts[0], gas: 4700000 })
+const deployedContract = VotingContract.new(
+	['candidate-0', 'candidate-1', 'candidate-2', 'candidate-3', 'candidate-4'],
+	{ data: '0x' + byteCode, from: web3.eth.accounts[0], gas: 4700000 })
 
 const contractInstance = VotingContract.at(deployedContract.address)
 
@@ -34,7 +36,6 @@ const rp = require('request-promise');
 
 var app = express()
 app.use('/public', express.static('public'))
-app.use('/uploads', express.static('public'))
 app.engine('.hbs', exphbs({
 	defaultLayout: 'main',
 	extname: '.hbs',
@@ -119,7 +120,7 @@ app.get('/select', function (req, res) {
 })
 
 
-app.get('/login', function(req, res){
+app.get('/login', function (req, res) {
 	res.redirect('/select')
 })
 
@@ -128,7 +129,6 @@ app.get('/login', function(req, res){
 //Get candidate vote results
 app.get('/votes/:candidate', function (req, res) {
 	let name = req.params.candidate;
-	console.log(name)
 	let val = contractInstance.totalVotesFor.call(name).toString();
 	res.writeHead(200, { "Content-Type": "text/plain" })
 	res.end(val);
@@ -174,9 +174,9 @@ app.post('/setuserinfo/lastname', function (req, res) {
 //Actual vote submission
 app.post('/submit', function (req, res) {
 	var ballotSubmission = req.body.ballot;
-	var result = contractInstance.voteForCandidate.call(ballotSubmission);
+	console.log(ballotSubmission);
+	var result = contractInstance.voteForCandidate(ballotSubmission, {from:web3.eth.accounts[0]});
 	if (result) {
-		res.writeHead(200);
 		res.redirect('/')
 	} else {
 		res.writeHead(401, { "Content-Type": "text/html" });
@@ -231,7 +231,7 @@ app.post('/uploads', async function (req, res, next) {
 				//console.log(food);
 
 
-				res.write("<h1>Secure Vote</h1><img style='max-width:20%' src='" + prog.files.fileName[0].path + "'/><h3>Person:" + person[0].toUpperCase() + person.slice(1) + "</h3><h2>Score: " + score * 100 + "% resemblence </h2> <a href='/'>Go Back</a><br /><a href='/login?name="+(person[0].toUpperCase() + person.slice(1))+"'>Log in</a>");
+				res.write("<h1>Secure Vote</h1><img style='max-width:20%' src='" + prog.files.fileName[0].path + "'/><h3>Person:" + person[0].toUpperCase() + person.slice(1) + "</h3><h2>Score: " + score * 100 + "% resemblence </h2> <a href='/'>Go Back</a><br /><a href='/login?name=" + (person[0].toUpperCase() + person.slice(1)) + "'>Log in</a>");
 				res.end();
 
 				console.log(prog.files.fileName[0])

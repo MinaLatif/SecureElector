@@ -33,10 +33,6 @@ body {
     display: none;
 }
 
-#popup-dialog {
-    font-size: 18px;
-}
-
 #votingPageTitle {
     text-align: center
 }
@@ -101,5 +97,27 @@ body {
 
 .button5:hover {
     background-color: #555555;
+    color: white;
+}
+
+.submit-ballot-confirm {
+    background-color: white; 
+    color: black; 
+    border: 2px solid #5CAF50;
+}
+
+.submit-ballot-confirm:hover {
+    background-color: #5CAF50;
+    color: white;
+}
+
+.submit-ballot-no {
+    background-color: white; 
+    color: black; 
+    border: 2px solid #ff4336;
+}
+
+.submit-ballot-no:hover {
+    background-color: #ff4336;
     color: white;
 }
