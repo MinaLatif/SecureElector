@@ -1,4 +1,4 @@
-const candidates = {"Rama": "candidate-0", "Nick": "candidate-1", "Jose": "candidate-2"}
+const candidates = {"GreenParty": "candidate-0", "Conservative": "candidate-1", "Liberal": "candidate-2", "NDP": "candidate-3","Bloc-Quebecois": "candidate-4"}
 
 const voteForCandidate = (candidateName) => {
     candidateName = $("#candidate").val();

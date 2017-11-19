@@ -7,13 +7,13 @@
   <link rel="stylesheet" href="./public/styles/votingPage.css">
 </head>
 <body class="container">
-  <h1>A Simple Hello World Voting Application</h1>
-  <div>
-    <button class="button button1">Green</button>
-    <button class="button button2">Blue</button>
-    <button class="button button3">Red</button>
-    <button class="button button4">Gray</button>
-    <button class="button button5">Black</button>
+  <h1 id="votingPageTitle">Welcome to Canada Election's Online Portal!</h1>
+  <div id="candidate-button-collection">
+    <button class="button button1">Green Party</button>
+    <button class="button button2">Conservative</button>
+    <button class="button button3">Liberal</button>
+    <button class="button button4">NDP</button>
+    <button class="button button5">Bloc-Quebecois</button>
   </div>
   <div class="table-responsive">
     <table class="table table-bordered">
@@ -25,16 +25,24 @@
       </thead>
       <tbody>
         <tr>
-          <td>Rama</td>
+          <td>Green Party</td>
           <td id="candidate-0"></td>
         </tr>
         <tr>
-          <td>Nick</td>
+          <td>Conservative</td>
           <td id="candidate-1"></td>
         </tr>
         <tr>
-          <td>Jose</td>
+          <td>Liberal</td>
           <td id="candidate-2"></td>
+        </tr>
+        <tr>
+          <td>NDP</td>
+          <td id="candidate-3"></td>
+        </tr>
+        <tr>
+          <td>Bloc-Quebecois</td>
+          <td id="candidate-4"></td>
         </tr>
       </tbody>
     </table>
