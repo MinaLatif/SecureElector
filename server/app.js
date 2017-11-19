@@ -10,6 +10,29 @@ var app = express();
 
 var multer = require('multer'); // library to uplaod photos https://github.com/expressjs/multer
 
+var voters = new Map();
+const info = (sin , municipality) => {
+    return {
+      SIN: sin,
+      Municipality:municipality
+    }
+};
+
+voters.set('Bassem Shaker',info(123,'Toronto'))
+voters.set('Mina Latif',info(456,'Scarbrough'))
+voters.set('Adithya V',info(789,'Markham'))
+voters.set('Travis Madill','Richmondhill')
+
+// voters.set('Mina Latif',info)
+//
+// players['Adithya V']{
+//   'SIN'= 789
+// };
+//
+// players['Travis Madill']{
+//   'SIN'= 012
+// };
+
 // storage used with Multer library to define where to save files on server, and how to save filename
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -110,6 +133,10 @@ app.post('/uploads', async function (req, res, next) {
 
                 res.write("<h1>Secure Vote</h1><img style='max-width:20%' src='" + prog.files.fileName[0].path + "'/><h3>Person:" + person[0].toUpperCase() + person.slice(1) + "</h3><h2>Score: " + score * 100 + "% resemblence </h2> <a href='/'>Go Back</a>");
                 res.end();
+
+                var filepath = prog.files.fileName[0].path;
+                fs.unlinkSync(filePath);
+
             }
         }
     });
@@ -119,5 +146,5 @@ app.post('/uploads', async function (req, res, next) {
 
 
 app.listen(3003, function () {
-    console.log("Working on port 3003");
+    console.log("Listening on port 3003");
 });
