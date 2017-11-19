@@ -1,28 +1,25 @@
-const candidates = {"Rama": "candidate-1", "Nick": "candidate-2", "Jose": "candidate-3"}
+const candidates = {"Rama": "candidate-0", "Nick": "candidate-1", "Jose": "candidate-2"}
 
-function voteForCandidate() {
+const voteForCandidate = (candidateName) => {
     candidateName = $("#candidate").val();
     contractInstance.voteForCandidate(candidateName, {from: web3.eth.accounts[0]}, function() {
     let div_id = candidates[candidateName];
-    console.log(contractInstance.totalVotesFor.call("candidate-1"));
     $("#" + div_id).html(contractInstance.totalVotesFor.call(candidateName).toString());
     });
 }
 
 $('document').ready(function() {
-    candidateNames = Object.keys(candidates);
-    for (var i = 0; i < candidateNames.length; i++) {
-        let name = candidateNames[i];
+    const candidateNames = Object.keys(candidates);
+    const scores = [];
+    for (let i = 0; i < candidateNames.length; i++) {
+        const name = candidateNames[i];
+        const index = i;
         $.ajax({
             type: 'GET',
             url: `votes/${name}`,
-            success: (response) => {
-                console.log(response);
+            success: (voteCount) => {
+                $("#candidate-" + index).html(voteCount);
             }
         });
-        let val = contractInstance.totalVotesFor.call(name).toString();;
-        console.log(val)
-        console.log(contractInstance.totalVotesFor.call("candidate-1"));
-        $("#" + candidates[name]).html(val);
     }
 });
