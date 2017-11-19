@@ -31,7 +31,7 @@ app.engine('.hbs', exphbs({
 }))
 
 app.set('view engine', '.hbs')
-app.set('views', path.join(__dirname, '/views'))
+app.set('views', path.join(__dirname, '/views/layouts'))
 
 app.get('/', function(req, res){
 	res.render('index', {contractInstance})
