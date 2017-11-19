@@ -75,13 +75,15 @@ contract Voting {
   }
 
   // Sets the user's first name
-  function setFirstName(string fname) public {
+  function setFirstName(string fname) public returns (bool) {
     voters[msg.sender].firstName = fname;
+    return true;
   }
 
   // Set the user's last name
-  function setLastName(string lname) public {
+  function setLastName(string lname) public returns (bool) {
     voters[msg.sender].lastName = lname;
+    return true;
   }
 
   // Returns the sender's first name from the blockchain

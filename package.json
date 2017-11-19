@@ -19,12 +19,19 @@
   "homepage": "https://github.com/TravisMadill/SecureElector#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
+    "ejs": "^2.4.2",
     "express": "^4.16.2",
     "express-handlebars": "^3.0.0",
-    "fs": "0.0.1-security",
+    "fs": "0.0.2",
+    "multer": "^1.1.0",
     "path": "^0.12.7",
+    "progress-stream": "^1.2.0",
+    "request": "^2.72.0",
+    "request-promise": "^4.2.2",
     "solc": "^0.4.18",
     "swig": "^1.4.2",
+    "url": "^0.11.0",
+    "watson-developer-cloud": "^2.41.1",
     "web3": "0.20.0"
   },
   "devDependencies": {}
