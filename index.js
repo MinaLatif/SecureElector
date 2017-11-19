@@ -1,40 +1,54 @@
-var fs = require('fs');
-var Web3 = require('web3');
-var web3 = new Web3.providers.HttpProvider("http://52.235.42.157:8545");
-var code = fs.readFileSync('Voting.sol').toString()
+const path = require('path')
+var fs = require('fs')
+const Web3 = require('web3')
+
+const web3 = new Web3(new Web3.providers.HttpProvider("http://52.242.26.191:8545"))
 var solc = require('solc')
-var compiledCode = solc.compile(code)
 
-abiDefinition = JSON.parse(compiledCode.contracts[':Voting'].interface)
+const code = fs.readFileSync("Voting.sol");
+console.log('Compiling...')
+const output = solc.compile(code.toString(), 1);
+console.log('Done.')
+const bytecode = output.contracts[':Voting'].bytecode;
+const abi = JSON.parse(output.contracts[':Voting'].interface);
 
-console.log('^^^^', web3);
-VotingContract = web3.eth.contract(abiDefinition)
-byteCode = compiledCode.contracts[':Voting'].bytecode
-deployedContract = VotingContract.new(['Rama','Nick','Jose'],{data: byteCode, from: web3.eth.accounts[0], gas: 4700000})
-deployedContract.address
-contractInstance = VotingContract.at(deployedContract.address)
 
-candidates = {"Rama": "candidate-1", "Nick": "candidate-2", "Jose": "candidate-3"}
+const VotingContract = web3.eth.contract(abi)
+const byteCode = output.contracts[':Voting'].bytecode
+const deployedContract = VotingContract.new(['Rama','Nick','Jose'],{data: '0x' + byteCode, from: web3.eth.accounts[0], gas: 4700000})
 
-function voteForCandidate() {
-  candidateName = $("#candidate").val();
-  contractInstance.voteForCandidate(candidateName, {from: web3.eth.accounts[0]}, function() {
-	let div_id = candidates[candidateName];
-	console.log(contractInstance.totalVotesFor.call("candidate-1"));
-    $("#" + div_id).html(contractInstance.totalVotesFor.call(candidateName).toString());
-  });
-}
+const contractInstance = VotingContract.at(deployedContract.address)
 
-$('document').ready(function() {
-  candidateNames = Object.keys(candidates);
-  for (var i = 0; i < candidateNames.length; i++) {
-    let name = candidateNames[i];
-	let val = contractInstance.totalVotesFor.call(name).toString();;
-	console.log(val)
-	console.log(contractInstance.totalVotesFor.call("candidate-1"));
-    $("#" + candidates[name]).html(val);
-  }
-});
+
+var express = require('express')
+var exphbs = require('express-handlebars')
+var app = express()
+app.use(express.static(__dirname + '/public'))
+app.engine('.hbs', exphbs({
+	defaultLayout: 'main',
+	extname: '.hbs',
+	layoutsDir: path.join(__dirname, 'views')
+}))
+
+app.set('view engine', '.hbs')
+app.set('views', path.join(__dirname, '/views'))
+
+app.get('/', function(req, res){
+	res.render('index', {contractInstance})
+})
+
+app.get('/votes/:candidate', function(req, res){
+	let name = req.params.candidate;
+	console.log(name)
+	let val = contractInstance.totalVotesFor.call(name).toString();
+	res.writeHead(200, {"Content-Type": "text/plain"})
+	res.end(val);
+})
+
+
+console.log('Listening on port 3000...')
+app.listen(3000)
+
 
 
 
