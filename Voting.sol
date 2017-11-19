@@ -50,11 +50,12 @@ contract Voting {
 
   // This function increments the vote count for the specified candidate. This
   // is equivalent to casting a vote
-  function voteForCandidate(bytes32 candidate) public {
+  function voteForCandidate(bytes32 candidate) public returns (bool) {
     require(validCandidate(candidate) && !voters[msg.sender].voted);
     votesReceived[candidate] += 1;
     voters[msg.sender].voted = true;
     voters[msg.sender].votedFor = candidate;
+    return true;
   }
 
   // This function ensures that the candidate being voted for
@@ -66,6 +67,11 @@ contract Voting {
       }
     }
     return false;
+  }
+
+  // Returns whether or not the user can vote in the current election
+  function canVote() view public returns (bool) {
+    return voters[msg.sender].voted;
   }
 
   // Sets the user's first name

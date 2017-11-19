@@ -1,12 +1,12 @@
 {
-  "name": "Secure Election",
+  "name": "secure-elector",
   "version": "1.0.0",
-  "description": "",
+  "description": "''''''NOTE'''''' The project code was largely based off of https://github.com/stahlmanDesign/node-express-multer-image-upload for the image upload.",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Bassem Shaker",
+  "author": "",
   "license": "ISC",
   "dependencies": {
     "ejs": "^2.4.2",

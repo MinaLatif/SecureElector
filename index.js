@@ -22,6 +22,8 @@ const contractInstance = VotingContract.at(deployedContract.address)
 
 var express = require('express')
 var exphbs = require('express-handlebars')
+var bodyParser = require('body-parser')
+
 var app = express()
 app.use('/public', express.static('public'))
 app.engine('.hbs', exphbs({
@@ -29,6 +31,10 @@ app.engine('.hbs', exphbs({
 	extname: '.hbs',
 	layoutsDir: path.join(__dirname, 'views')
 }))
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+	extended: true
+}));
 
 app.set('view engine', '.hbs')
 app.set('views', path.join(__dirname, '/views/layouts'))
@@ -43,6 +49,18 @@ app.get('/votes/:candidate', function(req, res){
 	let val = contractInstance.totalVotesFor.call(name).toString();
 	res.writeHead(200, {"Content-Type": "text/plain"})
 	res.end(val);
+})
+
+app.post('/submit', function(req, res){
+	var ballotSubmission = req.body.ballot;
+	var result = contractInstance.voteForCandidate.call(ballotSubmission);
+	if(result){
+		res.writeHead(200);
+		res.redirect('/')
+	} else {
+		res.writeHead(401, {"Content-Type": "text/html"});
+		res.end("<h1>401 Unauthorized</h1><p>You have already voted.</p>");
+	}
 })
 
 
