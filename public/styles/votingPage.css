@@ -2,6 +2,41 @@ body {
     margin: auto
 }
 
+.hide {
+    display: none;
+}
+
+.parentDisable {
+    position:fixed;
+    top:0;
+    left:0;
+    background:#000;
+    opacity:0.8;
+    z-index:998;
+    height:100%;
+    width:100%;
+    color: white;
+
+    display: none;
+}
+#vote-confirm-popup {
+    position: absolute;
+    z-index:999;
+    color: black;
+    margin: auto;
+    width: 500px;
+    height: 400px;
+    background: white;
+    text-align: center;
+    border-radius: 10px;
+
+    display: none;
+}
+
+#popup-dialog {
+    font-size: 18px;
+}
+
 #votingPageTitle {
     text-align: center
 }
