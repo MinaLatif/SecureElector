@@ -1,2 +1,4 @@
 node_modules/*
 !node_modules/watson-developer-cloud/visual-recognition/v3.js
+uploads/*
+public/uploads/*
