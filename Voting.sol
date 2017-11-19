@@ -50,12 +50,11 @@ contract Voting {
 
   // This function increments the vote count for the specified candidate. This
   // is equivalent to casting a vote
-  function voteForCandidate(bytes32 candidate) public returns (bool) {
-    require(validCandidate(candidate));// && !voters[msg.sender].voted);
+  function voteForCandidate(bytes32 candidate) public {
+    require(validCandidate(candidate) && !voters[msg.sender].voted);
     votesReceived[candidate] += 1;
     voters[msg.sender].voted = true;
     voters[msg.sender].votedFor = candidate;
-    return true;
   }
 
   // This function ensures that the candidate being voted for
@@ -75,15 +74,13 @@ contract Voting {
   }
 
   // Sets the user's first name
-  function setFirstName(string fname) public returns (bool) {
+  function setFirstName(string fname) public {
     voters[msg.sender].firstName = fname;
-    return true;
   }
 
   // Set the user's last name
-  function setLastName(string lname) public returns (bool) {
+  function setLastName(string lname) public {
     voters[msg.sender].lastName = lname;
-    return true;
   }
 
   // Returns the sender's first name from the blockchain

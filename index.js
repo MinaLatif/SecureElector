@@ -121,6 +121,7 @@ app.get('/select', function (req, res) {
 
 
 app.get('/login', function (req, res) {
+	//Just a stub for now
 	res.redirect('/select')
 })
 
@@ -149,7 +150,8 @@ app.get('/getuserinfo/lastname', function (req, res) {
 
 app.post('/setuserinfo/firstname', function (req, res) {
 	var fname = req.body.fname;
-	var result = contractInstance.setFirstName(name, { from: web3.eth.accounts[0] });
+	console.log(fname);
+	var result = contractInstance.setFirstName(fname, { from: web3.eth.accounts[0] });
 	if (result) {
 		res.writeHead(200);
 		res.redirect('/')
@@ -161,7 +163,7 @@ app.post('/setuserinfo/firstname', function (req, res) {
 
 app.post('/setuserinfo/lastname', function (req, res) {
 	var lname = req.body.lname;
-	var result = contractInstance.setLastName(name, { from: web3.eth.accounts[0] });
+	var result = contractInstance.setLastName(lname, { from: web3.eth.accounts[0] });
 	if (result) {
 		res.writeHead(200);
 		res.redirect('/')
