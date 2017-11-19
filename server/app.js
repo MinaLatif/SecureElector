@@ -10,29 +10,6 @@ var app = express();
 
 var multer = require('multer'); // library to uplaod photos https://github.com/expressjs/multer
 
-var voters = new Map();
-const info = (sin , municipality) => {
-    return {
-      SIN: sin,
-      Municipality:municipality
-    }
-};
-
-voters.set('Bassem Shaker',info(123,'Toronto'))
-voters.set('Mina Latif',info(456,'Scarbrough'))
-voters.set('Adithya V',info(789,'Markham'))
-voters.set('Travis Madill','Richmondhill')
-
-// voters.set('Mina Latif',info)
-//
-// players['Adithya V']{
-//   'SIN'= 789
-// };
-//
-// players['Travis Madill']{
-//   'SIN'= 012
-// };
-
 // storage used with Multer library to define where to save files on server, and how to save filename
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -63,7 +40,7 @@ function getWatsonData(path) {
           var params = {
             images_file: fs.createReadStream(path),
             parameters:  {
-              classifier_ids:['people_1090960648']
+              classifier_ids:['people_427308620']
             }
 
 
@@ -126,8 +103,18 @@ app.post('/uploads', async function (req, res, next) {
                 const watsonResponse = await getWatsonData(prog.files.fileName[0].path);
                 const watsonResponseJson = JSON.parse(watsonResponse);
 
-                const person = watsonResponseJson.images[0].classifiers[0].classes[0].class;
-                const score = watsonResponseJson.images[0].classifiers[0].classes[0].score;
+                var person = "";
+                var score = 0;
+                const persons_length = watsonResponseJson.images[0].classifiers[0].classes.length
+
+                for (var i = 0; i < persons_length; i++){
+                  var scor = watsonResponseJson.images[0].classifiers[0].classes[i].score;
+                  if (scor > score){
+                    score = scor
+                    person = watsonResponseJson.images[0].classifiers[0].classes[0].class;
+                  }
+                }
+
                 //console.log(food);
 
 
@@ -136,7 +123,6 @@ app.post('/uploads', async function (req, res, next) {
 
                 var filepath = prog.files.fileName[0].path;
                 fs.unlinkSync(filePath);
-
             }
         }
     });
