@@ -23,7 +23,7 @@ const contractInstance = VotingContract.at(deployedContract.address)
 var express = require('express')
 var exphbs = require('express-handlebars')
 var app = express()
-app.use(express.static(__dirname + '/public'))
+app.use('/public', express.static('public'))
 app.engine('.hbs', exphbs({
 	defaultLayout: 'main',
 	extname: '.hbs',
